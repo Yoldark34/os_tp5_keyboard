@@ -66,7 +66,6 @@ BYTE* L_PT_Ligne_1 = Video + NOMBRE_BYTE_PAR_LIGNE;
 UINT16 L_Index;
     for (L_Index=0; L_Index<NOMBRE_BYTE_TOTAL-NOMBRE_BYTE_PAR_LIGNE; L_Index++) {
       L_PT_Ligne_0[L_Index]=L_PT_Ligne_1[L_Index];
-
     }
 
 UINT16 L_Offset=NOMBRE_ELEMENTS-NOMBRE_COLONNES;
@@ -86,6 +85,14 @@ inline void Positionne_Curseur(BYTE P_X, BYTE P_Y)
    ECRAN_Curseur_X = P_X;
    ECRAN_Curseur_Y = P_Y;
 }
+
+BYTE Get_Cursor_Pos_X() {
+	return ECRAN_Curseur_X;
+}
+
+BYTE Get_Cursor_Pos_Y() {
+	return ECRAN_Curseur_Y;
+}
 //--------------------------------------------------------------------------------------------------
 inline void Affiche_Curseur()
 {
@@ -97,7 +104,7 @@ inline void Affiche_Curseur()
     outb(0x3d4, 0x0f);
     outb(0x3d5, (BYTE) L_Offset);
     outb(0x3d4, 0x0e);
-    outb(0x3d5, (BYTE) (L_Offset >> 8));
+    outb(0x3d5, (BYTE) (L_Offset >> 8)); 
 }
 
 
@@ -114,19 +121,23 @@ inline void Repositionne_Curseur()
     if (ECRAN_Curseur_Y>=NOMBRE_LIGNES) {
            Defilement_Haut();
            ECRAN_Curseur_Y--;
-     }
+	}
 }
 
+void reset_Cursor() {
+	ECRAN_Curseur_X = 0;
+	ECRAN_Curseur_Y = 0;
+}
 
 //--------------------------------------------------------------------------------------------------
 void Affiche_Caractere(UCHAR P_Caractere)
  {
   UINT16 L_Offset;
      switch (P_Caractere) {
-         case 10 : ECRAN_Curseur_Y++;
+		case 10: ECRAN_Curseur_Y++; //\n
                    ECRAN_Curseur_X=0;
                    break;
-         case 13 : ECRAN_Curseur_X=0;
+		case 13: ECRAN_Curseur_X = 0; //\t
                    break;
          case 9  : ECRAN_Curseur_X = ECRAN_Curseur_X + TAILLE_TABULATION;
                    ECRAN_Curseur_X = ECRAN_Curseur_X % NOMBRE_COLONNES;
@@ -158,6 +169,10 @@ void Affiche_Chaine(UCHAR P_Chaine[])
 void Regle_Couleur(BYTE P_Attribut)
 {
    Attribut_Actuel=P_Attribut;
+}
+
+BYTE Donne_Couleur(BYTE P_Attribut) {
+	return Attribut_Actuel;
 }
 
 
